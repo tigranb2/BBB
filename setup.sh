@@ -36,12 +36,6 @@ cd
 echo 'export PATH=$PATH:~/go-ethereum-1.9.12/build/bin' >> /root/.bashrc
 source /root/.bashrc
 
-cd 
-sudo apt install curl
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt install nodejs
-npm install web3
-npm install yargs
 
 cd
 mkdir mininet
@@ -52,6 +46,13 @@ git checkout -b 2.2.2
 cd ..
 mininet/util/install.sh -a
 sudo mn --test pingall
+
+cd 
+sudo apt install curl
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt install nodejs
+npm install web3
+npm install yargs
 
 #cd
 #mkdir -p ethData1/keystore
