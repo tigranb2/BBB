@@ -36,7 +36,12 @@ cd
 echo 'export PATH=$PATH:~/go-ethereum-1.9.12/build/bin' >> /root/.bashrc
 source /root/.bashrc
 
-
+cd 
+sudo apt install curl
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt install nodejs
+npm install web3
+npm install yargs
 
 cd
 mkdir mininet
