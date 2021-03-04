@@ -90,6 +90,11 @@ def main():
             n=i, networkid=network_id, port=port,
             ip=nodes[i - 1], etherbase=bases[i % len(bases)]))
         delay_command(i, node_n_check_join.format(i))
+        
+    delay_command(4, "cd ~/BBB && nodejs performance.js --connect ws://10.0.0.1:8101 &")
+    delay_command(5, "cd ~/BBB && . sendTx.sh" )
+    # starts performance.js (try h2)
+    # sends transactions every 3 seconds (try h1)
 
     time1 = time()
     while True:
