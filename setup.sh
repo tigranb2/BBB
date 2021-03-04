@@ -64,4 +64,3 @@ npm install yargs
 #echo export DDR3=~/ethData3 >>~/.bashrc
 #echo export DDR4=~/ethData4 >>~/.bashrc
 #source ~/.bashrc
-
