@@ -28,7 +28,7 @@ node_n_start = (
     "--nat extip:{ip} --netrestrict 10.0.0.0/24 "
     "--bootnodes $ENODE_ADDRESS "
     f"--mine --minerthreads={miner_thread} "
-    "--etherbase= '0x64fe25df48a9f21887d3ee886435e58e501e7623' "
+    "--etherbase={etherbase} "
     "> ~/BBB/data/nohup-{ip}.out &")
 node_n_check_join = "geth attach $DDR{}/geth.ipc --exec admin.peers"
 
