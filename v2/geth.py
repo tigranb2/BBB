@@ -20,7 +20,7 @@ gen_enode = (f"ENODE_ADDRESS=\"enode://$(bootnode -nodekey $DDR1/geth/nodekey -w
 node_1_start = (
     f"nohup geth --datadir=$DDR1 --networkid {network_id} --port {port} "
     f"--nat extip:{nodes[0]} --netrestrict 10.0.0.0/24 --ws --wsaddr 10.0.0.1 --wsport 8101 "
-    f"--mine --minerthreads={miner_thread} --etherbase= '0x64fe25df48a9f21887d3ee886435e58e501e7623' "
+    f"--mine --minerthreads={miner_thread} --etherbase '0x64fe25df48a9f21887d3ee886435e58e501e7623' "
     "--allow-insecure-unlock --unlock 0 --password ~/BBB/password.sec "
     f"> ~/BBB/data/nohup-{nodes[0]}.out &")
 node_n_start = (
