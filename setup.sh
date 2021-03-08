@@ -95,10 +95,9 @@ echo 'JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> /root/.bashrc
 source /root/.bashrc
 
 cd
-echo "deb http://downloads.apache.org/cassandra/debian 40x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-curl https://downloads.apache.org/cassandra/KEYS | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install cassandra
+curl -OL https://downloads.apache.org/cassandra/4.0-beta4/apache-cassandra-4.0-beta4-bin.tar.gz
+tar -xzvf apache-cassandra-4.0-beta4-bin.tar.gz
+rm apache-cassandra-4.0-beta4-bin.tar.gz
 
 
 #cd
