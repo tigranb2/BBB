@@ -98,6 +98,7 @@ cd
 curl -OL https://downloads.apache.org/cassandra/4.0-beta4/apache-cassandra-4.0-beta4-bin.tar.gz
 tar -xzvf apache-cassandra-4.0-beta4-bin.tar.gz
 rm apache-cassandra-4.0-beta4-bin.tar.gz
+mv apache-cassandra-4.0-beta4 cassandra
 
 
 #cd
