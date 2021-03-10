@@ -81,8 +81,9 @@ def main():
         h.cmdPrint("ls")
     
     delay_command(1, "~/cassandra/bin/cassandra -R")
-    sleep(10)
-    delay_command(1, "~/cassandra/bin/nodetool status")
+    
+    CLI(net) 
+    # puts user in CLI
 
 if __name__ == '__main__':
 	main()
