@@ -100,6 +100,8 @@ tar -xzvf apache-cassandra-3.11.10-bin.tar.gz
 rm apache-cassandra-3.11.10-bin.tar.gz
 mv apache-cassandra-3.11.10 cassandra
 
+cd
+go get github.com/gocql/gocql
 
 #cd
 #mkdir -p ethData1/keystore
