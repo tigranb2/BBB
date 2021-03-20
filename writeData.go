@@ -9,7 +9,7 @@ import (
 
 /*
 CREATE TABLE car_stats (
-	sensor_id text,
+	sensor_id int,
 	collect_time timestamp,
 	temperature text,
 	speed text,
@@ -39,7 +39,8 @@ func main() {
 	cassandraWrite(msg2)
 	cassandraWrite(msg3)
 	cassandraWrite(msg4)
-	fmt.Println(cassandraRead(10101, time.Now().Add(-4 * time.Minute).String(), time.Now().String()))
+
+	fmt.Println(cassandraRead(10101, time.Now().Add(-4 * time.Minute), time.Now()))
 }
 
 func cassandraInit(CONNECT string){
@@ -54,17 +55,17 @@ func cassandraInit(CONNECT string){
 
 func cassandraWrite(data Car_stats) {
 	//create new row in test_table
-	if err := Session.Query("INSERT INTO car_stats(sensor_id,collect_time,temperature,speed) VALUES(?, ?, ?, ?)", data.sensor_id, data.collect_time.Format("2006-01-02 15:04:05"), data.temperature, data.speed).Exec(); err != nil {
+	if err := Session.Query("INSERT INTO car_stats(sensor_id,collect_time,temperature,speed) VALUES(?, ?, ?, ?)", data.sensor_id, data.collect_time, data.temperature, data.speed).Exec(); err != nil {
 		fmt.Println(err)
 	}
 }
 
-func cassandraRead(sensor_id int, time_lower string, time_upper string) []Car_stats {
+func cassandraRead(sensor_id int, time_lower time.Time, time_upper time.Time) []Car_stats {
 	var data []Car_stats
 	m := map[string]interface{}{}
 
 	//read from specifed range in car_stats
-	iterable := Session.Query("SELECT * FROM car_stats WHERE sensor_id='?' AND collect_time>='?' AND collect_time<='?'", sensor_id, time_lower, time_upper).Iter()
+	iterable := Session.Query("SELECT * FROM car_stats WHERE sensor_id=? AND collect_time>='?' AND collect_time<='?'", sensor_id, time_lower.Format("2006-01-02T15:04:05.000+0000"), time_upper.Format("2006-01-02T15:04:05.000+0000")).Iter()
 	for iterable.MapScan(m) {
 		data = append(data, Car_stats{
 			sensor_id: m["sensor_id"].(int),
