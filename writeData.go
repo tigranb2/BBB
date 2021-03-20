@@ -3,25 +3,43 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"time"
 	"github.com/gocql/gocql"
 )
 
+/*
+CREATE TABLE car_stats (
+	sensor_id text,
+	collect_time timestamp,
+	temperature text,
+	speed text,
+	PRIMARY KEY (sensor_id,collect_time)
+)
+*/
+
 var Session *gocql.Session
 
-type Data struct {
-	id int
-	message string
+type Car_stats struct {
+	sensor_id int
+	collect_time time.Time
+	temperature string
+	speed string
 }
 
 func main() {
-	msg1 := Data{1, "Hello World"}
-	msg2 := Data{2, "Test message"}
-	msg3 := Data{3, "message 3 !"}
 	cassandraInit("127.0.0.1")
+	msg1 := Car_stats{10101, time.Now(), "32C", "61km"}
+	time.Sleep(1000 * time.Millisecond)
+	msg2 := Car_stats{10132, time.Now(), "31C", "60km"}
+	time.Sleep(1000 * time.Millisecond)
+	msg3 := Car_stats{10101, time.Now(), "24C", "37km"}
+	time.Sleep(1000 * time.Millisecond)
+	msg4 := Car_stats{10101, time.Now(), "19C", "25km"}
 	cassandraWrite(msg1)
 	cassandraWrite(msg2)
 	cassandraWrite(msg3)
-	fmt.Println(cassandraRead())
+	cassandraWrite(msg4)
+	fmt.Println(cassandraRead(10101, time.Now().Add(-4 * time.Minute).String(), time.Now().String()))
 }
 
 func cassandraInit(CONNECT string){
@@ -34,23 +52,25 @@ func cassandraInit(CONNECT string){
 	}
 }
 
-func cassandraWrite(data Data) {
+func cassandraWrite(data Car_stats) {
 	//create new row in test_table
-	if err := Session.Query("INSERT INTO test_table(id, message) VALUES(?, ?)", data.id, data.message).Exec(); err != nil {
+	if err := Session.Query("INSERT INTO car_stats(sensor_id,collect_time,temperature,speed) VALUES(?, ?, ?, ?)", data.sensor_id, data.collect_time.Format("2006-01-02 15:04:05"), data.temperature, data.speed).Exec(); err != nil {
 		fmt.Println(err)
 	}
 }
 
-func cassandraRead() []Data {
-	var data []Data
+func cassandraRead(sensor_id int, time_lower string, time_upper string) []Car_stats {
+	var data []Car_stats
 	m := map[string]interface{}{}
 
-	//read all rows in test_table
-	iterable := Session.Query("SELECT * FROM test_table").Iter()
+	//read from specifed range in car_stats
+	iterable := Session.Query("SELECT * FROM car_stats WHERE sensor_id='?' AND collect_time>='?' AND collect_time<='?'", sensor_id, time_lower, time_upper).Iter()
 	for iterable.MapScan(m) {
-		data = append(data, Data{
-			id: m["id"].(int),
-			message: m["message"].(string),
+		data = append(data, Car_stats{
+			sensor_id: m["sensor_id"].(int),
+			collect_time: m["colect_time"].(time.Time),
+			temperature: m["temperature"].(string),
+			speed: m["speed"].(string),
 		})
 		m = map[string]interface{}{}
 	}
