@@ -9,19 +9,19 @@ import (
 
 /*
 CREATE TABLE car_stats (
-	sensor_id int,
-	collect_time timestamp,
-	temperature text,
-	speed text,
-	PRIMARY KEY (sensor_id,collect_time)
-)
+     sensor_id int,
+     collect_time timestamp,
+     temperature text,
+     speed text,
+     PRIMARY KEY ((sensor_id), collect_time)
+   ) WITH CLUSTERING ORDER BY (collect_time DESC);
 */
 
 var Session *gocql.Session
 
 type Car_stats struct {
 	sensor_id int
-	collect_time time.Time
+	Collect_time time.Time
 	temperature string
 	speed string
 }
@@ -55,7 +55,7 @@ func cassandraInit(CONNECT string){
 
 func cassandraWrite(data Car_stats) {
 	//create new row in test_table
-	if err := Session.Query("INSERT INTO car_stats(sensor_id,collect_time,temperature,speed) VALUES(?, ?, ?, ?)", data.sensor_id, data.collect_time, data.temperature, data.speed).Exec(); err != nil {
+	if err := Session.Query("INSERT INTO car_stats(sensor_id,collect_time,temperature,speed) VALUES(?, ?, ?, ?)", data.sensor_id, data.Collect_time, data.temperature, data.speed).Exec(); err != nil {
 		fmt.Println(err)
 	}
 }
@@ -63,13 +63,14 @@ func cassandraWrite(data Car_stats) {
 func cassandraRead(sensor_id int, time_lower time.Time, time_upper time.Time) []Car_stats {
 	var data []Car_stats
 	m := map[string]interface{}{}
-
+	query := fmt.Sprintf("SELECT * FROM car_stats WHERE sensor_id=%v AND collect_time>='%s' AND collect_time<='%s'", sensor_id, time_lower.Format("2006-01-02 15:04:05.000"), time_upper.Format("2006-01-02 15:04:05.000"))
+	
 	//read from specifed range in car_stats
-	iterable := Session.Query("SELECT * FROM car_stats WHERE sensor_id=? AND collect_time>='?' AND collect_time<='?'", sensor_id, time_lower.Format("2006-01-02T15:04:05.000+0000"), time_upper.Format("2006-01-02T15:04:05.000+0000")).Iter()
+	iterable := Session.Query(query).Iter()
 	for iterable.MapScan(m) {
 		data = append(data, Car_stats{
 			sensor_id: m["sensor_id"].(int),
-			collect_time: m["colect_time"].(time.Time),
+			Collect_time: m["collect_time"].(time.Time),
 			temperature: m["temperature"].(string),
 			speed: m["speed"].(string),
 		})
