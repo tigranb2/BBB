@@ -45,7 +45,7 @@ func cassandraInit(CONNECT string){
 
 func simulateWrites() {
 	fmt.Println("Generating data... \nType CTRL+C to stop.")
-	sensors := []int{1, 2, 3, 4, 5}
+	sensors := []int{1, 2, 3, 4, 5} //holds all sensor ids
 	var randI int
 	for {
 		for _, sensor := range sensors {
