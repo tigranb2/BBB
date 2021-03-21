@@ -44,15 +44,18 @@ func cassandraInit(CONNECT string){
 }
 
 func simulateWrites() {
-	sensors := []int{10101, 10102, 10103}
+	fmt.Println("Generating data... \nType CTRL+C to stop.")
+	sensors := []int{1, 2, 3, 4, 5}
+	var randI int
 	for {
 		for _, sensor := range sensors {
-			randI := rand.Intn(8 - 3) + 8 //generates a value within [3, 8]
+			randI = rand.Intn(8 - 3) + 3 //generates a value within [3, 8]
 			str := strconv.Itoa(randI*11) //returns string of randomly generated int
 			data := Car_stats{sensor, time.Now(), (str+"C"), (str+"km")}
 			cassandraWrite(data)
 		}
-		time.Sleep(5 * time.Second)
+		randI = rand.Intn(3000 - 1000) + 1000
+		time.Sleep(time.Duration(randI)*time.Millisecond) //sleeps for 1 - 3 seconds
 	}
 }
 
