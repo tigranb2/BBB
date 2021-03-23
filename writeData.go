@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 	"time"
+	"math/rand"
+	"strconv"
 	"github.com/gocql/gocql"
 )
 
@@ -28,28 +30,32 @@ type Car_stats struct {
 
 func main() {
 	cassandraInit("127.0.0.1")
-	msg1 := Car_stats{10101, time.Now(), "32C", "61km"}
-	time.Sleep(1000 * time.Millisecond)
-	msg2 := Car_stats{10132, time.Now(), "31C", "60km"}
-	time.Sleep(1000 * time.Millisecond)
-	msg3 := Car_stats{10101, time.Now(), "24C", "37km"}
-	time.Sleep(1000 * time.Millisecond)
-	msg4 := Car_stats{10101, time.Now(), "19C", "25km"}
-	cassandraWrite(msg1)
-	cassandraWrite(msg2)
-	cassandraWrite(msg3)
-	cassandraWrite(msg4)
-
-	fmt.Println(cassandraRead(10101, time.Now().Add(-4 * time.Minute), time.Now()))
+	simulateWrites()
 }
 
 func cassandraInit(CONNECT string){
 	var err error
-	cluster := gocql.NewCluster("127.0.0.1") //connect to cassandra database
+	cluster := gocql.NewCluster(CONNECT) //connect to cassandra database
 	cluster.Keyspace = "test_keyspace"
 	Session, err = cluster.CreateSession() 
 	if err != nil {
 		fmt.Print(err)
+	}
+}
+
+func simulateWrites() {
+	fmt.Println("Generating data... \nType CTRL+C to stop.")
+	sensors := []int{1, 2, 3, 4, 5} //holds all sensor ids
+	var randI int
+	for {
+		for _, sensor := range sensors {
+			randI = rand.Intn(8 - 3) + 3 //generates a value within [3, 8]
+			str := strconv.Itoa(randI*11) //returns string of randomly generated int
+			data := Car_stats{sensor, time.Now(), (str+"C"), (str+"km")}
+			cassandraWrite(data)
+		}
+		randI = rand.Intn(3000 - 1000) + 1000
+		time.Sleep(time.Duration(randI)*time.Millisecond) //sleeps for 1 - 3 seconds
 	}
 }
 
